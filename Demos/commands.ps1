@@ -1,18 +1,37 @@
 ####### CREATE CLUSTER  ###########
 
+
+
 # Create a resource group
-az group create --name democluster1-rg --location eastus
+az group create --name democluster-rg --location eastus
 
 
 # Create a cluster
-az aks create --resource-group democluster1-rg --name demoAKSCluster1 --node-count 1 --enable-addons monitoring --generate-ssh-keys
+az aks create --resource-group democluster-rg --name demoAKSCluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
 
 # Get Credentials for cluster
-az aks get-credentials --resource-group democluster1-rg --name demoAKSCluster1
+az aks get-credentials --resource-group democluster-rg --name demoAKSCluster
 
+
+
+
+
+## Alias
+Set-Alias -Name k -Value kubectl
 
 
 ############ POD DEMO ############
+
+# view all primitives
+k api-resources
+
+# imperative pod creation
+
+k run nginx --image=nginx --restart=Never --port=80 --dry-run=client -o yaml
+
+# dry run
+k run nginx --image=nginx --restart=Never --port=80 --dry-run=client -o yaml > mypod-imperative.yaml
+
 # create pod
 kubectl apply -f pod.yaml
 
@@ -46,11 +65,14 @@ kubectl get pods
 # provided by get pods above
 
 
-kubectl delete pod azure-vote-front-78dc4ff55b-tfb9v
+kubectl delete pod azure-vote-back-59d587dbb7-j9vqc
+
 
 #Check to see if it came back
-
 kubectl get pods
+
+#Check Deployment Status
+kubectl get deployments
 # Get external ip to view app running
 kubectl get service azure-vote-front --watch
 
@@ -90,13 +112,14 @@ kubectl delete -f https://kubernetes.io/examples/controllers/job.yaml
 az group delete --help
 
 # Clean Azure Resources
-az group delete -n democluster1-rg
+az group delete -n democluster-rg
 
 ############# OTHER COMMANDS ############
 ## Alias
 Set-Alias -Name k -Value kubectl
 
 k version
+
 
 
 ## Other commands
@@ -113,12 +136,18 @@ k get po
 # Delete pod with force and no wait
 k delete pod label-demo --grace-period=0 --force
 
-# Help and Output options 
+# Help and Output options
 k create  --help
 k apply --help
 k apply -f pod.yaml -o json
 # Explains
 k explain pods.spec
+
+kubectl run redis --image=redis --dry-run=client -o yaml > redis.yaml
+
+k delete pod redis --grace-period=0 --force
+
+
 
 
 
